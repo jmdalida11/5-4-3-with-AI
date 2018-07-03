@@ -26,51 +26,29 @@ function print(){
 
 function move(post, val){
     if(gameOver) return;
-    let isSwitch = false;
-
-    if(post == FIVE){
-        if(val > 0 && values[FIVE] - val >= 0 && values[FIVE] != 0){
-            values[FIVE] -= val;
+    if(post == FIVE || post == FOUR || post == THREE){
+        if(val > 0 && values[post] - val >= 0 && values[post] != 0){
+            values[post] -= val;
             check();
-            isSwitch = true;
-        }else{
-            console.log("Invalid Move");
-        }
-    }else if(post == FOUR){
-        if(val > 0 && values[FOUR] - val >= 0 && values[FOUR] != 0){
-            values[FOUR] -= val;
-            check();
-            isSwitch = true;
-        }else{
-            console.log("Invalid Move");
-        }
-    }else if(post == THREE){
-        if(val > 0 && values[THREE] - val >= 0 && values[THREE] != 0){
-            values[THREE] -= val;
-            check();
-            isSwitch = true;
+            switchTurn();
         }else{
             console.log("Invalid Move");
         }
     }else{
         console.log("Invalid Move. Choices FIVE, FOUR and THREE only");
     }
-
-    if(isSwitch){
-        switchTurn();
+    if(!gameOver){
+        print();
     }
-    print();
-   
 }
 
 function switchTurn(){
     if(turn == Player.p1){
         turn = Player.p2;
-    }  
+    }
     else{
         turn = Player.p1;
     }
-       
 }
 
 function check(){
@@ -84,20 +62,18 @@ function check(){
     }
 }
 
-
-
 function eval(node, playerTurn){
     if(playerTurn != ai){
         return -100;
     }else{
         return 100;
     }
-    return 0; 
+    return 0;
 }
 
 function minmax(node, playerTurn){
     var bestscore;
-	var bestmove = [-1, -1];
+    var bestmove = [-1, -1];
 
     if(node[FIVE] == 0 && node[FOUR] == 0 && node[THREE] == 0){
         bestscore = eval(node, playerTurn);
@@ -106,34 +82,34 @@ function minmax(node, playerTurn){
             bestscore = -Infinity;
             for(let i=0; i<node.length; i++){
                 for(let val=1; val<=node[i]; val++){
-                    
+
                     var newNode = newState(node, i, val);
                     var value = minmax(newNode, human)[0];
-                    
+
                     if(value > bestscore){
                         bestscore =  value;
                         bestmove = [i, val];
                     }
-    
+
                 }
             }
         }else{
-            bestscore = Infinity;			
+            bestscore = Infinity;
             for(let i=0; i<node.length; i++){
                 for(let val=1; val<=node[i]; val++){
-                    
+
                     var newNode = newState(node, i, val);
                     var value = minmax(newNode, ai)[0];
-                    
+
                     if(value < bestscore){
                         bestscore =  value;
                         bestmove = [i, val];
                     }
-    
+
                 }
             }
         }
-    }    
+    }
     return [bestscore, bestmove];
 }
 
